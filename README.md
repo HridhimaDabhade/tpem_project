@@ -95,16 +95,22 @@ Frontend runs at `http://localhost:5173` and proxies `/api` and `/static` to the
 - **Email:** `admin@tpeml.com`
 - **Password:** `Admin@123`
 
-Create more users via `POST /api/auth/seed` (dev only):
+### 5. Create Additional Users
 
-```json
-{
-  "email": "hr@tpeml.com",
-  "password": "Hr@123",
-  "full_name": "HR User",
-  "role": "hr"
-}
+To create additional users (HR, recruiters), use the user creation script:
+
+```bash
+cd backend
+python create_user.py
 ```
+
+The script will prompt you for:
+- Email address
+- Full name
+- Role (admin, hr, or recruiter)
+- Password (minimum 8 characters)
+
+Alternatively, you can create users directly in MongoDB.
 
 ## Features
 
@@ -134,7 +140,6 @@ Create more users via `POST /api/auth/seed` (dev only):
 | POST | `/api/re-interview/request` | Request re-interview |
 | POST | `/api/re-interview/resolve` | Approve/reject (Admin) |
 | GET | `/api/re-interview/pending` | Pending requests (Admin) |
-| POST | `/api/sync/forms` | (removed) MS Forms integration removed; use `POST /api/candidates` |
 | GET | `/api/qr/{candidate_id}` | QR PNG |
 
 ## External form integrations

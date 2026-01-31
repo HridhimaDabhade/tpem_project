@@ -5,10 +5,10 @@ Role-based route protection via require_roles dependency.
 from datetime import datetime, timedelta
 from typing import List, Optional
 
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from pymongo.database import Database
 
 from config import get_settings
@@ -16,17 +16,18 @@ from database import get_db, USERS
 from models.user import UserView, user_from_doc
 
 settings = get_settings()
-# Use argon2 instead of bcrypt for better compatibility
-pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 http_bearer = HTTPBearer(auto_error=False)
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    """Verify password using bcrypt directly for Python 3.13 compatibility."""
+    return bcrypt.checkpw(plain.encode('utf-8'), hashed.encode('utf-8'))
 
 
 def hash_password(plain: str) -> str:
-    return pwd_context.hash(plain)
+    """Hash password using bcrypt directly for Python 3.13 compatibility."""
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(plain.encode('utf-8'), salt).decode('utf-8')
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

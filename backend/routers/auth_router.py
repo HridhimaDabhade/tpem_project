@@ -53,25 +53,3 @@ def login(req: LoginRequest, db: Database = Depends(get_db)):
 def me(user: UserView = Depends(require_auth)):
     """Return current user from JWT."""
     return MeResponse(id=user.id, email=user.email, full_name=user.full_name, role=user.role)
-
-
-class SeedUserRequest(BaseModel):
-    email: EmailStr
-    password: str
-    full_name: str
-    role: str = "hr"
-
-
-@router.post("/seed")
-def seed_user(req: SeedUserRequest, db: Database = Depends(get_db)):
-    """Create a user (dev only). In production, protect or remove."""
-    if get_user_by_email(db, req.email):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
-    doc = user_doc(
-        email=req.email,
-        hashed_password=hash_password(req.password),
-        full_name=req.full_name,
-        role=req.role,
-    )
-    r = db[USERS].insert_one(doc)
-    return {"id": str(r.inserted_id), "email": req.email, "role": req.role}
