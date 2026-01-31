@@ -1,0 +1,26 @@
+# FastAPI & Server
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+
+# Database (MongoDB)
+pymongo==4.6.1
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Excel & QR
+openpyxl==3.1.2
+qrcode[pil]==7.4.2
+Pillow==10.2.0
+
+# Config & validation
+pydantic==2.6.1
+pydantic-settings==2.1.0
+python-dotenv==1.0.1
+
+# HTTP client (MS Forms sync)
+httpx==0.26.0
+
+# Utils
+python-multipart==0.0.9

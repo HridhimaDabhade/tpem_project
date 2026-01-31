@@ -1,0 +1,24 @@
+/* TPEML – Tata Passenger Electric Mobility. Corporate brand palette. */
+:root {
+  --tata-blue: #0066B3;
+  --tata-blue-dark: #004C8A;
+  --tata-blue-light: #E6F2FA;
+  --white: #FFFFFF;
+  --grey-50: #FAFAFA;
+  --grey-100: #F5F5F5;
+  --grey-200: #E8E8E8;
+  --grey-300: #D1D1D1;
+  --grey-500: #9E9E9E;
+  --grey-700: #616161;
+  --grey-900: #212121;
+  --text-primary: #212121;
+  --text-secondary: #616161;
+  --border: #E8E8E8;
+  --success: #2E7D32;
+  --warning: #ED6C02;
+  --error: #D32F2F;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 6px;
+}
