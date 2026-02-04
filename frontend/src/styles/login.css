@@ -44,3 +44,19 @@
 .login-form .form-group input {
   max-width: none;
 }
+
+.login-form .error-msg {
+  background: #FFEBEE;
+  border-left: 3px solid var(--error);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--error);
+  font-weight: 500;
+}
+
+.login-form .error-msg::before {
+  content: '⚠️ ';
+  margin-right: 6px;
+}

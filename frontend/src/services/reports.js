@@ -1,7 +1,7 @@
 import * as excelGen from './excelGenerator';
 import * as mockData from './mockData';
 
-const USE_MOCK_API = true; // Set to false when backend is ready
+const USE_MOCK_API = false; // Connected to real backend
 
 function downloadBlob(blob, filename) {
   const a = document.createElement('a');

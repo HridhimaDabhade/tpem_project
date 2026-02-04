@@ -3,10 +3,9 @@ import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
-import { CandidateSearch } from './pages/CandidateSearch';
 import { CandidateProfile } from './pages/CandidateProfile';
-import { YetToInterview } from './pages/YetToInterview';
-import { InterviewCompleted } from './pages/InterviewCompleted';
+import { CandidateOnboarding } from './pages/CandidateOnboarding';
+import { UserProfile } from './pages/UserProfile';
 import { Reports } from './pages/Reports';
 import { ReInterviewAdmin } from './pages/ReInterviewAdmin';
 
@@ -25,14 +24,6 @@ function App() {
             }
           />
           <Route
-            path="/candidates"
-            element={
-              <ProtectedRoute>
-                <CandidateSearch />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/candidates/:candidateId"
             element={
               <ProtectedRoute>
@@ -41,18 +32,18 @@ function App() {
             }
           />
           <Route
-            path="/yet-to-interview"
+            path="/onboarding"
             element={
-              <ProtectedRoute>
-                <YetToInterview />
+              <ProtectedRoute allowedRoles={['admin', 'hr']}>
+                <CandidateOnboarding />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/interview-completed"
+            path="/profile"
             element={
               <ProtectedRoute>
-                <InterviewCompleted />
+                <UserProfile />
               </ProtectedRoute>
             }
           />

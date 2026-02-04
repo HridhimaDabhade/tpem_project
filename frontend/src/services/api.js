@@ -3,7 +3,7 @@
  * Uses Vite proxy: /api -> backend.
  * MOCK MODE: Set USE_MOCK_API to true to use hardcoded data
  */
-const USE_MOCK_API = true; // Set to false when backend is ready
+const USE_MOCK_API = false; // Connected to real backend
 const BASE = '';
 
 import * as mockData from './mockData';
@@ -182,10 +182,18 @@ export async function api(method, path, body = null, useAuth = true) {
   }
   const r = await fetch(`${BASE}${path}`, opts);
   if (r.status === 401) {
-    localStorage.removeItem('tpeml_token');
-    localStorage.removeItem('tpeml_user');
-    window.location.href = '/login';
-    throw new Error('Unauthorized');
+    // Parse error message first
+    const j = await r.json().catch(() => ({}));
+    const errorMsg = j.detail || j.message || 'Invalid email or password';
+    
+    // Don't redirect if this is a login request - let the login page handle the error
+    if (!path.includes('/auth/login')) {
+      localStorage.removeItem('tpeml_token');
+      localStorage.removeItem('tpeml_user');
+      window.location.href = '/login';
+    }
+    
+    throw new Error(errorMsg);
   }
   if (!r.ok) {
     const j = await r.json().catch(() => ({}));
