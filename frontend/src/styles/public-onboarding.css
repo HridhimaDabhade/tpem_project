@@ -1,0 +1,227 @@
+/* Public Onboarding Styles */
+
+.public-onboarding-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.public-header {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+
+.public-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 32px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.public-brand-logo {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #0066b3 0%, #004d85 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+}
+
+.public-brand-text h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0066b3;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.public-brand-text p {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0 0;
+  line-height: 1.2;
+}
+
+/* Success Message */
+.success-message-container {
+  max-width: 600px;
+  margin: 100px auto;
+  background: white;
+  border-radius: 20px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+  animation: slideInUp 0.5s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+  margin: 0 auto 24px;
+  animation: scaleIn 0.6s ease 0.2s both;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.success-message-container h1 {
+  font-size: 28px;
+  color: #10b981;
+  margin: 0 0 8px;
+}
+
+.success-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 32px;
+}
+
+.candidate-id-box {
+  background: #f9fafb;
+  border: 2px dashed #0066b3;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 0 0 32px;
+}
+
+.candidate-id-box label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.candidate-id {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0066b3;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  margin: 0 0 12px;
+}
+
+.candidate-id-note {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Form inside public container */
+.public-onboarding-container .onboarding-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+}
+
+.public-onboarding-container .onboarding-header h2 {
+  font-size: 28px;
+  color: #1f2937;
+  margin: 0 0 8px;
+}
+
+.public-onboarding-container .onboarding-subtitle {
+  font-size: 15px;
+  color: #666;
+}
+
+/* Education section styling */
+.education-section {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.education-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .public-onboarding-container {
+    padding: 12px;
+  }
+
+  .public-brand {
+    padding: 16px 24px;
+    gap: 12px;
+  }
+
+  .public-brand-logo {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+
+  .public-brand-text h1 {
+    font-size: 20px;
+  }
+
+  .public-brand-text p {
+    font-size: 12px;
+  }
+
+  .public-onboarding-container .onboarding-container {
+    padding: 24px 16px;
+  }
+
+  .success-message-container {
+    margin: 40px auto;
+    padding: 40px 24px;
+  }
+
+  .candidate-id {
+    font-size: 24px;
+  }
+}

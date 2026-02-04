@@ -5,6 +5,7 @@ import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { CandidateProfile } from './pages/CandidateProfile';
 import { CandidateOnboarding } from './pages/CandidateOnboarding';
+import { PublicOnboarding } from './pages/PublicOnboarding';
 import { UserProfile } from './pages/UserProfile';
 import { Reports } from './pages/Reports';
 import { ReInterviewAdmin } from './pages/ReInterviewAdmin';
@@ -63,6 +64,10 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
+          {/* Public route - no auth required */}
+          <Route path="/apply" element={<PublicOnboarding />} />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

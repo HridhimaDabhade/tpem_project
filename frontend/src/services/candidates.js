@@ -22,3 +22,25 @@ export async function list({ status, role, skip = 0, limit = 50 } = {}) {
 export async function create(payload) {
   return api('POST', '/api/candidates', payload);
 }
+
+/**
+ * Self-onboarding for candidates (public endpoint, no auth required)
+ */
+export async function selfOnboard(payload) {
+  // Make API call without auth token
+  const BASE = '';
+  const response = await fetch(`${BASE}/api/public/onboard`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ detail: 'Failed to submit application' }));
+    throw new Error(error.detail || error.message || 'Failed to submit application');
+  }
+
+  return response.json();
+}

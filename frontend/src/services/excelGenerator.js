@@ -32,12 +32,13 @@ export function generateAuditLogsExcel(logs) {
 }
 
 export function generateInterviewResultsExcel(interviews) {
-  const headers = ['Candidate ID', 'Name', 'Email', 'Role', 'Interview Date', 'Decision', 'Notes'];
+  const headers = ['Candidate ID', 'Name', 'Email', 'Contact', 'Diploma Branch', 'Interview Date', 'Decision', 'Notes'];
   const rows = interviews.map(interview => ({
     'Candidate ID': interview.candidate_id || interview.id,
     'Name': interview.name,
     'Email': interview.email,
-    'Role': interview.role,
+    'Contact': interview.contact_no,
+    'Diploma Branch': interview.diploma_branch,
     'Interview Date': interview.interview_date ? new Date(interview.interview_date).toLocaleDateString() : '–',
     'Decision': interview.interview_status || interview.decision || '–',
     'Notes': interview.interview_notes || interview.notes || '–',
@@ -46,33 +47,45 @@ export function generateInterviewResultsExcel(interviews) {
 }
 
 export function generateDailyLogExcel(candidates) {
-  const headers = ['Candidate ID', 'Name', 'Email', 'Role', 'Applied Date', 'Status', 'Eligibility', 'Phone'];
+  const headers = ['Candidate ID', 'Name', 'Email', 'Contact', 'Diploma Branch', 'Registered Date', 'Status'];
   const rows = candidates.map(candidate => ({
     'Candidate ID': candidate.candidate_id || candidate.id,
     'Name': candidate.name,
     'Email': candidate.email,
-    'Role': candidate.role,
-    'Applied Date': candidate.applied_date ? new Date(candidate.applied_date).toLocaleDateString() : '–',
+    'Contact': candidate.contact_no,
+    'Diploma Branch': candidate.diploma_branch,
+    'Registered Date': candidate.created_at ? new Date(candidate.created_at).toLocaleDateString() : '–',
     'Status': candidate.status,
-    'Eligibility': candidate.eligibility,
-    'Phone': candidate.phone,
   }));
   return arrayToCsv(headers, rows);
 }
 
 export function generateCandidatesExcel(candidates) {
-  const headers = ['Candidate ID', 'Name', 'Email', 'Phone', 'Role', 'Experience', 'Location', 'Education', 'Status', 'Eligibility'];
+  const headers = [
+    'Candidate ID', 'Name', 'Gender', 'DOB', 'Email', 'Contact', 'State',
+    'Interview Location', 'Interview Date', 'Recruitment Year',
+    'College', 'Diploma Branch', 'Diploma %', 'Diploma Passout Year',
+    '10th %', '12th %', 'Status', 'Onboarding Type'
+  ];
   const rows = candidates.map(candidate => ({
     'Candidate ID': candidate.candidate_id || candidate.id,
     'Name': candidate.name,
-    'Email': candidate.email,
-    'Phone': candidate.phone,
-    'Role': candidate.role,
-    'Experience': candidate.experience_years ? `${candidate.experience_years} years` : '–',
-    'Location': candidate.location,
-    'Education': candidate.education,
+    'Gender': candidate.gender || '–',
+    'DOB': candidate.dob ? new Date(candidate.dob).toLocaleDateString() : '–',
+    'Email': candidate.email || '–',
+    'Contact': candidate.contact_no || '–',
+    'State': candidate.state_of_domicile || '–',
+    'Interview Location': candidate.interview_location || '–',
+    'Interview Date': candidate.date_of_interview ? new Date(candidate.date_of_interview).toLocaleDateString() : '–',
+    'Recruitment Year': candidate.year_of_recruitment || '–',
+    'College': candidate.college_name || '–',
+    'Diploma Branch': candidate.diploma_branch || '–',
+    'Diploma %': candidate.diploma_percentage || '–',
+    'Diploma Passout Year': candidate.diploma_passout_year || '–',
+    '10th %': candidate.tenth_percentage || '–',
+    '12th %': candidate.twelfth_percentage || '–',
     'Status': candidate.status,
-    'Eligibility': candidate.eligibility,
+    'Onboarding Type': candidate.onboarding_type || '–',
   }));
   return arrayToCsv(headers, rows);
 }

@@ -7,6 +7,7 @@ import { submitInterview } from '../services/interviews';
 import { useAuth } from '../auth/AuthContext';
 import { requestReInterview } from '../services/reInterview';
 import '../styles/layout.css';
+import '../styles/candidate-profile.css';
 
 const API_BASE = '';
 
@@ -77,7 +78,7 @@ export function CandidateProfile() {
       <Layout>
         <div className="page">
           <p className="error-msg">{error || 'Candidate not found.'}</p>
-          <Link to="/candidates" className="btn btn--secondary">Back to Search</Link>
+          <Link to="/" className="btn btn--secondary">Back to Dashboard</Link>
         </div>
       </Layout>
     );
@@ -90,50 +91,262 @@ export function CandidateProfile() {
   return (
     <Layout>
       <div className="page">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
-          <h1 className="page__title" style={{ margin: 0 }}>{profile.name}</h1>
-          <Link to="/candidates" className="btn btn--secondary">Back to Search</Link>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px', gap: 24, alignItems: 'start' }}>
-          <div className="table-wrap">
-            <table>
-              <tbody>
-                <tr><th style={{ width: 160 }}>Candidate ID</th><td><code>{profile.candidate_id}</code></td></tr>
-                <tr><th>Name</th><td>{profile.name}</td></tr>
-                <tr><th>Email</th><td>{profile.email || '–'}</td></tr>
-                <tr><th>Phone</th><td>{profile.phone || '–'}</td></tr>
-                <tr><th>Qualifications</th><td>{profile.qualifications || '–'}</td></tr>
-                <tr><th>Experience (years)</th><td>{profile.experience_years ?? '–'}</td></tr>
-                <tr><th>Role applied</th><td>{profile.role_applied || '–'}</td></tr>
-                <tr><th>Status</th><td><StatusTag value={profile.status} /></td></tr>
-                <tr><th>Eligibility</th><td><StatusTag value={profile.eligibility} /></td></tr>
-                {profile.status === 'interview_completed' && (
-                  <>
-                    <tr><th>Interview Decision</th><td><StatusTag value={profile.interview_status || profile.decision} /></td></tr>
-                    <tr><th>Interview Notes</th><td>{profile.interview_notes || '–'}</td></tr>
-                  </>
-                )}
-                <tr><th>Registered</th><td>{profile.created_at ? new Date(profile.created_at).toLocaleString() : '–'}</td></tr>
-              </tbody>
-            </table>
-          </div>
+        {/* Header */}
+        <div className="profile-header">
           <div>
-            <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 6, padding: 12, textAlign: 'center' }}>
-              <img src={qrUrl} alt="Candidate QR" style={{ maxWidth: 160, height: 'auto' }} />
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: '8px 0 0' }}>Candidate QR</p>
+            <h1 className="profile-name">{profile.name}</h1>
+            <div className="profile-id">
+              <code>{profile.candidate_id}</code>
+            </div>
+          </div>
+          <div className="profile-header-actions">
+            <Link to="/" className="btn btn--secondary">Back to Dashboard</Link>
+          </div>
+        </div>
+
+        {/* Status Cards */}
+        <div className="status-cards">
+          <div className="status-card">
+            <span className="status-card-label">Status</span>
+            <StatusTag value={profile.status} />
+          </div>
+          {profile.onboarding_type && (
+            <div className="status-card">
+              <span className="status-card-label">Onboarding Type</span>
+              <span className="status-card-value">{profile.onboarding_type === 'self' ? 'Self-Registered' : 'By Company User'}</span>
+            </div>
+          )}
+          {profile.status === 'interview_completed' && (
+            <div className="status-card">
+              <span className="status-card-label">Interview Decision</span>
+              <StatusTag value={profile.interview_status || profile.decision} />
+            </div>
+          )}
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="profile-grid">
+          {/* Left Column - Details */}
+          <div className="profile-details">
+            {/* Interview Details */}
+            {(profile.interview_location || profile.date_of_interview || profile.year_of_recruitment) && (
+              <div className="detail-section">
+                <h3 className="section-title">📅 Interview Details</h3>
+                <div className="detail-grid">
+                  {profile.interview_location && (
+                    <div className="detail-item">
+                      <span className="detail-label">Location</span>
+                      <span className="detail-value">{profile.interview_location}</span>
+                    </div>
+                  )}
+                  {profile.date_of_interview && (
+                    <div className="detail-item">
+                      <span className="detail-label">Date</span>
+                      <span className="detail-value">{new Date(profile.date_of_interview).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {profile.year_of_recruitment && (
+                    <div className="detail-item">
+                      <span className="detail-label">Recruitment Year</span>
+                      <span className="detail-value">{profile.year_of_recruitment}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Personal Information */}
+            <div className="detail-section">
+              <h3 className="section-title">👤 Personal Information</h3>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="detail-label">Full Name</span>
+                  <span className="detail-value">{profile.name}</span>
+                </div>
+                {profile.gender && (
+                  <div className="detail-item">
+                    <span className="detail-label">Gender</span>
+                    <span className="detail-value">{profile.gender}</span>
+                  </div>
+                )}
+                {profile.dob && (
+                  <div className="detail-item">
+                    <span className="detail-label">Date of Birth</span>
+                    <span className="detail-value">{new Date(profile.dob).toLocaleDateString()}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Contact Information */}
+            <div className="detail-section">
+              <h3 className="section-title">📧 Contact Information</h3>
+              <div className="detail-grid">
+                {profile.contact_no && (
+                  <div className="detail-item">
+                    <span className="detail-label">Contact Number</span>
+                    <span className="detail-value">{profile.contact_no}</span>
+                  </div>
+                )}
+                {profile.email && (
+                  <div className="detail-item">
+                    <span className="detail-label">Email</span>
+                    <span className="detail-value">{profile.email}</span>
+                  </div>
+                )}
+                {profile.residential_address && (
+                  <div className="detail-item detail-item--full">
+                    <span className="detail-label">Residential Address</span>
+                    <span className="detail-value">{profile.residential_address}</span>
+                  </div>
+                )}
+                {profile.state_of_domicile && (
+                  <div className="detail-item">
+                    <span className="detail-label">State of Domicile</span>
+                    <span className="detail-value">{profile.state_of_domicile}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Diploma Education */}
+            {(profile.college_name || profile.diploma_branch) && (
+              <div className="detail-section">
+                <h3 className="section-title">🎓 Diploma Education</h3>
+                <div className="detail-grid">
+                  {profile.college_name && (
+                    <div className="detail-item">
+                      <span className="detail-label">College</span>
+                      <span className="detail-value">{profile.college_name}</span>
+                    </div>
+                  )}
+                  {profile.university_name && (
+                    <div className="detail-item">
+                      <span className="detail-label">University</span>
+                      <span className="detail-value">{profile.university_name}</span>
+                    </div>
+                  )}
+                  {profile.diploma_enrollment_no && (
+                    <div className="detail-item">
+                      <span className="detail-label">Enrollment Number</span>
+                      <span className="detail-value">{profile.diploma_enrollment_no}</span>
+                    </div>
+                  )}
+                  {profile.diploma_branch && (
+                    <div className="detail-item">
+                      <span className="detail-label">Branch</span>
+                      <span className="detail-value">{profile.diploma_branch}</span>
+                    </div>
+                  )}
+                  {profile.diploma_passout_year && (
+                    <div className="detail-item">
+                      <span className="detail-label">Pass Out Year</span>
+                      <span className="detail-value">{profile.diploma_passout_year}</span>
+                    </div>
+                  )}
+                  {profile.diploma_percentage != null && (
+                    <div className="detail-item">
+                      <span className="detail-label">Percentage</span>
+                      <span className="detail-value">{profile.diploma_percentage}%</span>
+                    </div>
+                  )}
+                  {profile.any_backlog_in_diploma && (
+                    <div className="detail-item">
+                      <span className="detail-label">Backlogs</span>
+                      <span className="detail-value">{profile.any_backlog_in_diploma}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 10th & 12th Education */}
+            {(profile.tenth_percentage != null || profile.twelfth_percentage != null) && (
+              <div className="detail-section">
+                <h3 className="section-title">📚 10th & 12th Education</h3>
+                <div className="detail-grid">
+                  {profile.tenth_percentage != null && (
+                    <>
+                      <div className="detail-item">
+                        <span className="detail-label">10th Percentage</span>
+                        <span className="detail-value">{profile.tenth_percentage}%</span>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">10th Pass Out Year</span>
+                        <span className="detail-value">{profile.tenth_passout_year}</span>
+                      </div>
+                    </>
+                  )}
+                  {profile.twelfth_percentage != null && (
+                    <>
+                      <div className="detail-item">
+                        <span className="detail-label">12th Percentage</span>
+                        <span className="detail-value">{profile.twelfth_percentage}%</span>
+                      </div>
+                      <div className="detail-item">
+                        <span className="detail-label">12th Pass Out Year</span>
+                        <span className="detail-value">{profile.twelfth_passout_year}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Interview Results */}
+            {profile.status === 'interview_completed' && (
+              <div className="detail-section">
+                <h3 className="section-title">✓ Interview Results</h3>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span className="detail-label">Decision</span>
+                    <StatusTag value={profile.interview_status || profile.decision} />
+                  </div>
+                  {profile.interview_notes && (
+                    <div className="detail-item detail-item--full">
+                      <span className="detail-label">Notes</span>
+                      <span className="detail-value">{profile.interview_notes}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* System Information */}
+            <div className="detail-section">
+              <h3 className="section-title">ℹ️ System Information</h3>
+              <div className="detail-grid">
+                <div className="detail-item">
+                  <span className="detail-label">Registered On</span>
+                  <span className="detail-value">
+                    {profile.created_at ? new Date(profile.created_at).toLocaleString() : '–'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - QR Code */}
+          <div className="profile-sidebar">
+            <div className="qr-card">
+              <img src={qrUrl} alt="Candidate QR" className="qr-image" />
+              <p className="qr-label">Candidate QR Code</p>
             </div>
           </div>
         </div>
+
+        {/* Actions */}
         {profile.status === 'yet_to_interview' && ['admin', 'hr', 'interviewer'].includes(user?.role) && (
-          <div style={{ marginTop: 24, maxWidth: 480 }}>
+          <div className="action-section">
             <button type="button" className="btn btn--primary" onClick={() => setInterviewModal(true)}>
               Add Interview
             </button>
           </div>
         )}
+
         {profile.status === 'interview_completed' && ['admin', 'hr', 'interviewer'].includes(user?.role) && user?.role !== 'admin' && (
-          <div style={{ marginTop: 24, maxWidth: 480 }}>
-            <h3 style={{ marginBottom: 12 }}>Request Re-Interview</h3>
+          <div className="action-section">
+            <h3 style={{ marginBottom: 16 }}>Request Re-Interview</h3>
             <form onSubmit={handleRequestReInterview}>
               <div className="form-group">
                 <label>Reason</label>
@@ -148,6 +361,8 @@ export function CandidateProfile() {
             </form>
           </div>
         )}
+
+        {/* Interview Modal */}
         {interviewModal && (
           <div className="modal-overlay" onClick={() => !interviewSubmitting && setInterviewModal(false)}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>

@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { Layout } from '../components/Layout';
-import { useNavigate } from 'react-router-dom';
-import { create } from '../services/candidates';
+import { selfOnboard } from '../services/candidates';
 import {
   INTERVIEW_LOCATIONS,
   RECRUITMENT_YEARS,
@@ -11,6 +9,7 @@ import {
   STATES_OF_INDIA,
 } from '../constants/onboarding';
 import '../styles/onboarding.css';
+import '../styles/public-onboarding.css';
 
 const STEPS = [
   { id: 1, title: 'Interview Details', icon: '📅' },
@@ -21,10 +20,11 @@ const STEPS = [
   { id: 6, title: 'Review & Submit', icon: '✓' },
 ];
 
-export function CandidateOnboarding() {
-  const navigate = useNavigate();
+export function PublicOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [candidateId, setCandidateId] = useState('');
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     // Interview details
@@ -158,10 +158,11 @@ export function CandidateOnboarding() {
         twelfth_passout_year: formData.twelfth_passout_year ? formData.twelfth_passout_year.trim() : undefined,
       };
 
-      const candidate = await create(payload);
-      navigate(`/candidates/${encodeURIComponent(candidate.candidate_id)}`);
+      const candidate = await selfOnboard(payload);
+      setCandidateId(candidate.candidate_id);
+      setSubmitted(true);
     } catch (err) {
-      setError(err.message || 'Failed to create candidate');
+      setError(err.message || 'Failed to submit application');
     } finally {
       setSubmitting(false);
     }
@@ -186,6 +187,7 @@ export function CandidateOnboarding() {
     }
   };
 
+  // Same render methods as CandidateOnboarding (reusing the logic)
   const renderInterviewDetails = () => (
     <div className="form-step">
       <h3 className="step-title">📅 Interview Details</h3>
@@ -636,12 +638,48 @@ export function CandidateOnboarding() {
     </div>
   );
 
+  if (submitted) {
+    return (
+      <div className="public-onboarding-container">
+        <div className="success-message-container">
+          <div className="success-icon">✓</div>
+          <h1>Application Submitted Successfully!</h1>
+          <p className="success-subtitle">
+            Thank you for registering with Tata Passenger Electric Mobility Limited
+          </p>
+          <div className="candidate-id-box">
+            <label>Your Candidate ID:</label>
+            <div className="candidate-id">{candidateId}</div>
+            <p className="candidate-id-note">
+              Please save this ID for future reference. You will need it for your interview.
+            </p>
+          </div>
+          <div className="success-actions">
+            <button className="btn btn-primary" onClick={() => window.location.reload()}>
+              Submit Another Application
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Layout>
+    <div className="public-onboarding-container">
+      <div className="public-header">
+        <div className="public-brand">
+          <div className="public-brand-logo">T</div>
+          <div className="public-brand-text">
+            <h1>TPEML Recruitment 2026</h1>
+            <p>Tata Passenger Electric Mobility Limited</p>
+          </div>
+        </div>
+      </div>
+
       <div className="onboarding-container">
         <div className="onboarding-header">
-          <h1>Onboard New Candidate</h1>
-          <p className="onboarding-subtitle">Add a new candidate to the recruitment system</p>
+          <h2>Candidate Application Form</h2>
+          <p className="onboarding-subtitle">Please fill in all the required information</p>
         </div>
 
         {/* Step indicators */}
@@ -701,6 +739,6 @@ export function CandidateOnboarding() {
           )}
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

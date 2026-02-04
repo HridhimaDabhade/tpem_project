@@ -269,9 +269,8 @@ export function Dashboard() {
                     <th>Candidate ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Role Applied</th>
+                    <th>Diploma Branch</th>
                     <th>Status</th>
-                    <th>Eligibility</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -284,9 +283,8 @@ export function Dashboard() {
                       <td><code style={{ fontSize: 12, fontWeight: 600 }}>{c.candidate_id}</code></td>
                       <td style={{ fontWeight: 500 }}>{c.name}</td>
                       <td style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{c.email || '–'}</td>
-                      <td>{c.role_applied || '–'}</td>
+                      <td>{c.diploma_branch || '–'}</td>
                       <td><StatusTag value={c.status} /></td>
-                      <td><StatusTag value={c.eligibility} /></td>
                     </tr>
                   ))}
                 </tbody>
