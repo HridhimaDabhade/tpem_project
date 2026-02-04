@@ -40,7 +40,6 @@ class InterviewResult(BaseModel):
 @router.get("/yet-to-interview", response_model=dict)
 def list_yet_to_interview(
     role_filter: Optional[str] = Query(None, alias="role"),
-    eligibility: Optional[str] = Query(None),
     db: Database = Depends(get_db),
     user: UserView = Depends(require_auth),
 ):
@@ -48,8 +47,6 @@ def list_yet_to_interview(
     q = {"status": "yet_to_interview"}
     if role_filter:
         q["role_applied"] = {"$regex": role_filter, "$options": "i"}
-    if eligibility:
-        q["eligibility"] = eligibility
     candidates = list(db[CANDIDATES].find(q).sort("created_at", -1))
     items = []
     for c in candidates:
@@ -58,7 +55,6 @@ def list_yet_to_interview(
             "candidate_id": c.get("candidate_id"),
             "name": c.get("name"),
             "role_applied": c.get("role_applied"),
-            "eligibility": c.get("eligibility"),
             "experience_years": c.get("experience_years"),
             "qualifications": (c.get("qualifications") or "")[:200],
         })

@@ -10,25 +10,9 @@ from pymongo.database import Database
 from database import get_db, CANDIDATES
 from auth.jwt import require_auth, require_roles
 from models.user import UserView
-from models.candidate import candidate_doc, doc_to_candidate_profile
+from models.candidate import candidate_doc, doc_to_candidate_profile, CandidateProfile
 
 router = APIRouter(prefix="/api/candidates", tags=["candidates"])
-
-
-class CandidateProfile(BaseModel):
-    id: Optional[str]
-    candidate_id: str
-    name: str
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    qualifications: Optional[str] = None
-    experience_years: Optional[float] = None
-    role_applied: Optional[str] = None
-    status: str
-    eligibility: Optional[str] = None
-    qr_code_path: Optional[str] = None
-    ms_form_response_id: Optional[str] = None
-    created_at: Optional[str] = None
 
 
 @router.get("/search", response_model=dict)
@@ -79,12 +63,37 @@ def get_by_id(
 
 
 class CreateCandidateRequest(BaseModel):
+    # Basic info
     name: str
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    qualifications: Optional[str] = None
-    experience_years: Optional[float] = None
-    role_applied: Optional[str] = None
+    gender: str
+    dob: str  # Date of birth
+    contact_no: str
+    email: str
+    residential_address: str
+    state_of_domicile: str
+    
+    # Interview details
+    interview_location: str
+    date_of_interview: str
+    year_of_recruitment: str
+    
+    # Education - Diploma
+    college_name: str
+    university_name: str
+    diploma_enrollment_no: str
+    diploma_branch: str
+    diploma_passout_year: str
+    diploma_percentage: float
+    any_backlog_in_diploma: str
+    
+    # Education - 10th & 12th
+    tenth_percentage: float
+    tenth_passout_year: str
+    twelfth_percentage: Optional[float] = None  # Optional
+    twelfth_passout_year: Optional[str] = None  # Optional
+    
+    # Onboarding metadata (will be set by backend)
+    onboarding_type: str = "by_user"  # Default for protected route
 
 
 @router.post("", response_model=CandidateProfile, status_code=201)
@@ -93,34 +102,51 @@ def create_candidate(
     db: Database = Depends(get_db),
     user: UserView = Depends(require_roles(["admin", "hr"])),
 ):
-    """Manual candidate creation. Generates Candidate ID and QR."""
+    """Create candidate by company user. Generates Candidate ID and QR."""
     try:
         from utils.candidate_id import generate_candidate_id
         from services.qr_service import generate_qr_for_candidate
-        from services.eligibility_service import evaluate_eligibility
 
-        candidate_id = generate_candidate_id(db, req.role_applied)
+        # Generate candidate ID based on diploma branch
+        candidate_id = generate_candidate_id(db, req.diploma_branch)
+        
         doc = candidate_doc(
             candidate_id=candidate_id,
             name=req.name,
+            gender=req.gender,
+            dob=req.dob,
+            contact_no=req.contact_no,
             email=req.email,
-            phone=req.phone,
-            qualifications=req.qualifications,
-            experience_years=req.experience_years,
-            role_applied=req.role_applied,
+            residential_address=req.residential_address,
+            state_of_domicile=req.state_of_domicile,
+            interview_location=req.interview_location,
+            date_of_interview=req.date_of_interview,
+            year_of_recruitment=req.year_of_recruitment,
+            college_name=req.college_name,
+            university_name=req.university_name,
+            diploma_enrollment_no=req.diploma_enrollment_no,
+            diploma_branch=req.diploma_branch,
+            diploma_passout_year=req.diploma_passout_year,
+            diploma_percentage=req.diploma_percentage,
+            any_backlog_in_diploma=req.any_backlog_in_diploma,
+            tenth_percentage=req.tenth_percentage,
+            tenth_passout_year=req.tenth_passout_year,
+            twelfth_percentage=req.twelfth_percentage,
+            twelfth_passout_year=req.twelfth_passout_year,
+            onboarding_type="by_user",
+            onboarded_by=user.id,  # Store who created this candidate
             status="yet_to_interview",
-            eligibility="partial",
         )
+        
         r = db[CANDIDATES].insert_one(doc)
         doc["_id"] = r.inserted_id
+        
+        # Generate QR code
         try:
             generate_qr_for_candidate(db, doc, base_url="")
         except Exception as e:
             print(f"Warning: QR generation failed: {e}")
-        try:
-            evaluate_eligibility(db, doc)
-        except Exception as e:
-            print(f"Warning: Eligibility evaluation failed: {e}")
+        
         return CandidateProfile(**doc_to_candidate_profile(doc))
     except Exception as e:
         print(f"Error creating candidate: {e}")

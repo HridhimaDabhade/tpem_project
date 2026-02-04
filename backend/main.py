@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from config import get_settings
-from routers import auth_router, candidates_router, interview_router, reports_router, re_interview_router, qr_router, dashboard_router, users_router
+from routers import auth_router, candidates_router, interview_router, reports_router, re_interview_router, qr_router, dashboard_router, users_router, public_router
 
 settings = get_settings()
 
@@ -34,13 +34,16 @@ app.add_middleware(
 
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
+# Public routes (no auth required)
+app.include_router(public_router.router)
+
+# Protected routes (auth required)
 app.include_router(auth_router.router)
 app.include_router(users_router.router)
 app.include_router(candidates_router.router)
 app.include_router(interview_router.router)
 app.include_router(reports_router.router)
 app.include_router(re_interview_router.router)
-# sync_router (MS Forms) removed — use POST /api/candidates for manual entry
 app.include_router(qr_router.router)
 app.include_router(dashboard_router.router)
 
