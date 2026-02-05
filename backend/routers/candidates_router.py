@@ -105,7 +105,6 @@ def create_candidate(
     """Create candidate by company user. Generates Candidate ID and QR."""
     try:
         from utils.candidate_id import generate_candidate_id
-        from services.qr_service import generate_qr_for_candidate
 
         # Generate candidate ID based on diploma branch
         candidate_id = generate_candidate_id(db, req.diploma_branch)
@@ -140,12 +139,6 @@ def create_candidate(
         
         r = db[CANDIDATES].insert_one(doc)
         doc["_id"] = r.inserted_id
-        
-        # Generate QR code
-        try:
-            generate_qr_for_candidate(db, doc, base_url="")
-        except Exception as e:
-            print(f"Warning: QR generation failed: {e}")
         
         return CandidateProfile(**doc_to_candidate_profile(doc))
     except Exception as e:

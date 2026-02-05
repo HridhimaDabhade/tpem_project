@@ -47,7 +47,6 @@ def candidate_doc(
     
     # Status fields
     status: str = "yet_to_interview",
-    qr_code_path: str | None = None,
 ) -> dict[str, Any]:
     now = datetime.utcnow()
     return {
@@ -89,7 +88,6 @@ def candidate_doc(
         
         # Status fields
         "status": status,
-        "qr_code_path": qr_code_path,
         
         # Timestamps
         "created_at": now,
@@ -150,7 +148,6 @@ def doc_to_candidate_profile(d: dict) -> dict[str, Any]:
         
         # Status fields
         "status": d.get("status"),
-        "qr_code_path": d.get("qr_code_path"),
         
         # Timestamps
         "created_at": created_at,
@@ -198,7 +195,6 @@ class CandidateProfile(BaseModel):
     
     # Status fields
     status: str
-    qr_code_path: Optional[str] = None
     
     # Timestamps
     created_at: Optional[str] = None
