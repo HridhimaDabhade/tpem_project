@@ -84,10 +84,6 @@ export function CandidateProfile() {
     );
   }
 
-  const qrUrl = profile.qr_code_path
-    ? `${API_BASE}${profile.qr_code_path.startsWith('/') ? '' : '/'}${profile.qr_code_path}`
-    : `${API_BASE}/api/qr/${encodeURIComponent(profile.candidate_id)}`;
-
   return (
     <Layout>
       <div className="page">
@@ -323,14 +319,6 @@ export function CandidateProfile() {
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Right Column - QR Code */}
-          <div className="profile-sidebar">
-            <div className="qr-card">
-              <img src={qrUrl} alt="Candidate QR" className="qr-image" />
-              <p className="qr-label">Candidate QR Code</p>
             </div>
           </div>
         </div>

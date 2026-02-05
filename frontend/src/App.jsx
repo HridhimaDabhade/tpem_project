@@ -6,6 +6,7 @@ import { Dashboard } from './pages/Dashboard';
 import { CandidateProfile } from './pages/CandidateProfile';
 import { CandidateOnboarding } from './pages/CandidateOnboarding';
 import { PublicOnboarding } from './pages/PublicOnboarding';
+import { PublicFormQR } from './pages/PublicFormQR';
 import { UserProfile } from './pages/UserProfile';
 import { Reports } from './pages/Reports';
 import { ReInterviewAdmin } from './pages/ReInterviewAdmin';
@@ -61,6 +62,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <ReInterviewAdmin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/qr-code"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'hr']}>
+                <PublicFormQR />
               </ProtectedRoute>
             }
           />

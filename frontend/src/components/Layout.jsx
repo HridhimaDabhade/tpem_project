@@ -5,6 +5,7 @@ import '../styles/layout.css';
 
 const NAV = [
   { path: '/', label: 'Dashboard', icon: '📊' },
+  { path: '/qr-code', label: 'QR Code', icon: '📱', roles: ['admin', 'hr'] },
   { path: '/reports', label: 'Reports', icon: '📄', roles: ['admin', 'hr'] },
   { path: '/re-interview', label: 'Re-Interview', icon: '🔄', roles: ['admin'] },
 ];
