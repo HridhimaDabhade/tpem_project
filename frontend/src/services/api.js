@@ -4,7 +4,7 @@
  * MOCK MODE: Set USE_MOCK_API to true to use hardcoded data
  */
 const USE_MOCK_API = false; // Connected to real backend
-const BASE = '';
+const BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 import * as mockData from './mockData';
 
