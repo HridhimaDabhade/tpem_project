@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from fastapi.responses import Response
 import qrcode
 from io import BytesIO
+from config import get_settings
 
 router = APIRouter(prefix="/api/qr", tags=["qr"])
 
@@ -14,8 +15,8 @@ def get_public_form_qr():
     """Generate and return QR code PNG for the public candidate onboarding form."""
     try:
         # Generate QR code for the public form URL
-        # In production, replace with your actual domain
-        public_form_url = "http://localhost:5173/apply"
+        settings = get_settings()
+        public_form_url = f"{settings.FRONTEND_URL}/apply"
         
         # Create QR code
         qr = qrcode.QRCode(

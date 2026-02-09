@@ -2,6 +2,7 @@ import * as excelGen from './excelGenerator';
 import * as mockData from './mockData';
 
 const USE_MOCK_API = false; // Connected to real backend
+const BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 function downloadBlob(blob, filename) {
   const a = document.createElement('a');
@@ -23,7 +24,7 @@ export async function downloadDailyLog(fromDate, toDate) {
   const params = new URLSearchParams();
   if (fromDate) params.set('from_date', fromDate);
   if (toDate) params.set('to_date', toDate);
-  const r = await fetch(`/api/reports/daily-log?${params}`, {
+  const r = await fetch(`${BASE}/api/reports/daily-log?${params}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('tpeml_token')}` },
   });
   if (!r.ok) throw new Error('Download failed');
@@ -53,7 +54,7 @@ export async function downloadInterviewResults(fromDate, toDate, role, decision)
   if (toDate) params.set('to_date', toDate);
   if (role) params.set('role', role);
   if (decision) params.set('decision', decision);
-  const r = await fetch(`/api/reports/interview-results?${params}`, {
+  const r = await fetch(`${BASE}/api/reports/interview-results?${params}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('tpeml_token')}` },
   });
   if (!r.ok) throw new Error('Download failed');
@@ -83,7 +84,7 @@ export async function downloadAuditLogs(fromDate, toDate) {
   const params = new URLSearchParams();
   if (fromDate) params.set('from_date', fromDate);
   if (toDate) params.set('to_date', toDate);
-  const r = await fetch(`/api/reports/audit-logs?${params}`, {
+  const r = await fetch(`${BASE}/api/reports/audit-logs?${params}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem('tpeml_token')}` },
   });
   if (!r.ok) throw new Error('Download failed');

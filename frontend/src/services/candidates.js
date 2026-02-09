@@ -28,7 +28,7 @@ export async function create(payload) {
  */
 export async function selfOnboard(payload) {
   // Make API call without auth token
-  const BASE = '';
+  const BASE = import.meta.env.VITE_API_BASE_URL || '';
   const response = await fetch(`${BASE}/api/public/onboard`, {
     method: 'POST',
     headers: {

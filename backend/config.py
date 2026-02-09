@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     # App
     APP_ENV: str = "development"
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    FRONTEND_URL: str = "http://localhost:5173"
 
     class Config:
         # Ensure the .env next to this file is always used regardless of cwd
