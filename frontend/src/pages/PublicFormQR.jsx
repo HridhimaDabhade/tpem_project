@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import '../styles/public-form-qr.css';
 
-const API_BASE = '';
+const API_BASE = 'https://tpemproject-production.up.railway.app';
 
 export function PublicFormQR() {
   const [qrUrl, setQrUrl] = useState('');
@@ -28,7 +28,7 @@ export function PublicFormQR() {
     window.print();
   };
 
-  const publicFormUrl = `${window.location.origin}/apply`;
+  const publicFormUrl = 'https://tpem-project.vercel.app/apply';
 
   return (
     <Layout>
