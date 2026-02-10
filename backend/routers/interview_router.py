@@ -86,9 +86,17 @@ def submit_interview(
     )
     r = db[INTERVIEWS].insert_one(doc)
     db[CANDIDATES].update_one(
-        {"_id": cand_oid},
-        {"$set": {"status": "interview_completed", "updated_at": datetime.utcnow()}},
-    )
+    {"_id": cand_oid},
+    {
+        "$set": {
+            "status": "interview_completed",
+            "decision": req.decision,
+            "interview_notes": req.notes,
+            "updated_at": datetime.utcnow(),
+        }
+    },
+)
+
     log_action(db, user.oid, "interview_submit", "interview", str(r.inserted_id), {"candidate_id": req.candidate_id, "decision": req.decision})
     return {"id": str(r.inserted_id), "candidate_id": req.candidate_id, "decision": req.decision, "status": "interview_completed"}
 
