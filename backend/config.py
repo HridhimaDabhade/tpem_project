@@ -5,6 +5,19 @@ No hardcoded secrets; use .env for local development.
 from pathlib import Path
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+import os
+from dotenv import load_dotenv
+
+# Load .env.local only in development (local testing)
+if os.getenv('APP_ENV') != 'production':
+    local_env = Path(__file__).resolve().parent / ".env.local"
+    if local_env.exists():
+        load_dotenv(local_env)
+
+# Then load .env
+main_env = Path(__file__).resolve().parent / ".env"
+if main_env.exists():
+    load_dotenv(main_env)
 
 
 class Settings(BaseSettings):
@@ -31,8 +44,6 @@ class Settings(BaseSettings):
     FRONTEND_URL: str = "http://localhost:5173"
 
     class Config:
-        # Ensure the .env next to this file is always used regardless of cwd
-        env_file = str(Path(__file__).resolve().parent / ".env")
         case_sensitive = True
 
 

@@ -17,6 +17,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/apply" element={<PublicOnboarding />} />
+          <Route path="/qr-code" element={<PublicFormQR />} />
+          <Route path="/candidate/:candidateId" element={<CandidateProfile />} />
           <Route
             path="/"
             element={

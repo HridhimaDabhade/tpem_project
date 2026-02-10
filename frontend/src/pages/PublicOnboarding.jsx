@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { selfOnboard } from '../services/candidates';
 import {
   INTERVIEW_LOCATIONS,
@@ -11,6 +11,8 @@ import {
 import '../styles/onboarding.css';
 import '../styles/public-onboarding.css';
 
+//const API_BASE = 'https://tpemproject-production.up.railway.app';
+const API_BASE = ''; // Uses Vite proxy in dev, empty for production via env var
 const STEPS = [
   { id: 1, title: 'Interview Details', icon: '📅' },
   { id: 2, title: 'Personal Information', icon: '👤' },
@@ -59,6 +61,24 @@ export function PublicOnboarding() {
     twelfth_passout_year: '',
   });
 
+  // Check localStorage on mount to restore submitted state
+  useEffect(() => {
+    const savedCandidateId = localStorage.getItem('submittedCandidateId');
+    if (savedCandidateId) {
+      setCandidateId(savedCandidateId);
+      setSubmitted(true);
+    }
+  }, []);
+
+  const validateContactNumber = (value) => {
+    // Allow only digits and check length
+    return /^\d{10}$/.test(value.replace(/\D/g, ''));
+  };
+
+  const validateEmail = (value) => {
+    return value.includes('@');
+  };
+
   const updateField = (field, value) => {
     setFormData({ ...formData, [field]: value });
     setError('');
@@ -77,7 +97,9 @@ export function PublicOnboarding() {
       case 3: // Contact details
         return (
           formData.contact_no.trim() &&
+          validateContactNumber(formData.contact_no) &&
           formData.email.trim() &&
+          validateEmail(formData.email) &&
           formData.residential_address.trim() &&
           formData.state_of_domicile
         );
@@ -160,6 +182,8 @@ export function PublicOnboarding() {
 
       const candidate = await selfOnboard(payload);
       setCandidateId(candidate.candidate_id);
+      // Save to localStorage so it persists after refresh
+      localStorage.setItem('submittedCandidateId', candidate.candidate_id);
       setSubmitted(true);
     } catch (err) {
       setError(err.message || 'Failed to submit application');
@@ -300,9 +324,12 @@ export function PublicOnboarding() {
           type="tel"
           value={formData.contact_no}
           onChange={(e) => updateField('contact_no', e.target.value)}
-          placeholder="Enter contact number"
+          placeholder="Enter 10-digit contact number"
           required
         />
+        {formData.contact_no.trim() && !validateContactNumber(formData.contact_no) && (
+          <p className="error-message">Please enter a valid 10-digit contact number</p>
+        )}
       </div>
 
       <div className="form-group">
@@ -316,6 +343,9 @@ export function PublicOnboarding() {
           placeholder="Enter email address"
           required
         />
+        {formData.email.trim() && !validateEmail(formData.email) && (
+          <p className="error-message">Email must contain @ symbol</p>
+        )}
       </div>
 
       <div className="form-group">
@@ -639,6 +669,9 @@ export function PublicOnboarding() {
   );
 
   if (submitted) {
+    const qrUrl = `${API_BASE}/api/qr/candidate/${candidateId}`;
+    const candidateProfileUrl = `${window.location.origin}/candidate/${candidateId}`;
+    
     return (
       <div className="public-onboarding-container">
         <div className="success-message-container">
@@ -654,8 +687,40 @@ export function PublicOnboarding() {
               Please save this ID for future reference. You will need it for your interview.
             </p>
           </div>
+
+          <div className="candidate-qr-box">
+            <label>Your Profile QR Code:</label>
+            <p className="qr-note">Take a screenshot of this QR code and present it during your interview</p>
+            <div className="qr-image-wrapper">
+              <img 
+                src={qrUrl} 
+                alt={`QR Code for Candidate ${candidateId}`}
+                className="candidate-qr-image"
+                onError={() => console.log('QR code failed to load')}
+              />
+            </div>
+            <p className="qr-instruction">
+              HR can scan this QR code to view your profile
+            </p>
+          </div>
+
           <div className="success-actions">
-            <button className="btn btn-primary" onClick={() => window.location.reload()}>
+            <button 
+              className="btn btn-secondary" 
+              onClick={() => {
+                navigator.clipboard.writeText(candidateProfileUrl);
+                alert('Profile URL copied to clipboard!');
+              }}
+            >
+              📋 Copy Profile URL
+            </button>
+            <button 
+              className="btn btn-primary" 
+              onClick={() => {
+                localStorage.removeItem('submittedCandidateId');
+                window.location.reload();
+              }}
+            >
               Submit Another Application
             </button>
           </div>

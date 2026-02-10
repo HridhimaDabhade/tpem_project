@@ -9,7 +9,8 @@ import { requestReInterview } from '../services/reInterview';
 import '../styles/layout.css';
 import '../styles/candidate-profile.css';
 
-const API_BASE = 'https://tpemproject-production.up.railway.app';
+// Uses Vite proxy in dev, environment variable in production
+const API_BASE = '';
 
 export function CandidateProfile() {
   const { candidateId } = useParams();

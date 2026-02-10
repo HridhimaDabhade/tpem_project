@@ -143,6 +143,54 @@
   line-height: 1.5;
 }
 
+.candidate-qr-box {
+  background: #f9fafb;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 0 0 32px;
+}
+
+.candidate-qr-box label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.qr-note {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.qr-image-wrapper {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  display: inline-block;
+  margin: 0 0 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.candidate-qr-image {
+  width: 250px;
+  height: 250px;
+  display: block;
+  border-radius: 4px;
+}
+
+.qr-instruction {
+  font-size: 13px;
+  color: #667eea;
+  margin: 0;
+  font-weight: 500;
+}
+
 .success-actions {
   display: flex;
   justify-content: center;
