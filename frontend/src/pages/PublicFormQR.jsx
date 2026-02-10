@@ -28,7 +28,7 @@ export function PublicFormQR() {
     window.print();
   };
 
-  const publicFormUrl = `${window.location.origin}/apply`;
+  const publicFormUrl = 'https://tpem-project.vercel.app/apply';
 
   return (
     <Layout>
