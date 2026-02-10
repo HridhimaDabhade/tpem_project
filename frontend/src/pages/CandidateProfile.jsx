@@ -9,7 +9,7 @@ import { requestReInterview } from '../services/reInterview';
 import '../styles/layout.css';
 import '../styles/candidate-profile.css';
 
-const API_BASE = '';
+const API_BASE = 'https://tpemproject-production.up.railway.app';
 
 export function CandidateProfile() {
   const { candidateId } = useParams();
