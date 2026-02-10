@@ -1,84 +1,94 @@
-"""
-Reports API: Daily log, Interview results, Audit logs – Excel download.
-"""
-from datetime import datetime
-from typing import Optional
-
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pymongo.database import Database
+from io import BytesIO
+import openpyxl
 
-from database import get_db
-from auth.jwt import require_auth, require_roles
+from database import get_db, CANDIDATES
+from auth.jwt import require_auth
 from models.user import UserView
-from services.excel_service import daily_recruitment_log, interview_results, audit_logs_report
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
-
-
-def _parse_date(s: Optional[str]):
-    if not s:
-        return None
-    try:
-        return datetime.fromisoformat(s.replace("Z", "+00:00"))
-    except Exception:
-        return None
-
-
-@router.get("/daily-log")
-def export_daily_log(
-    from_date: Optional[str] = Query(None),
-    to_date: Optional[str] = Query(None),
+@router.get("/all-candidates")
+def download_all_candidates(
     db: Database = Depends(get_db),
-    user: UserView = Depends(require_roles(["admin", "hr"])),
+    user: UserView = Depends(require_auth),
 ):
-    """Download Excel: Daily recruitment log."""
-    fd = _parse_date(from_date)
-    td = _parse_date(to_date)
-    buf = daily_recruitment_log(db, from_date=fd, to_date=td)
-    filename = f"tpeml_daily_log_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.xlsx"
+    candidates = list(db[CANDIDATES].find({}).sort("created_at", -1))
+
+    if not candidates:
+        raise HTTPException(status_code=404, detail="No candidates found")
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "All Candidates"
+
+    headers = list(candidates[0].keys())
+    ws.append(headers)
+
+    for c in candidates:
+        ws.append([c.get(h) for h in headers])
+
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+
     return StreamingResponse(
-        buf,
+        stream,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": f"attachment; filename={filename}"},
+        headers={
+            "Content-Disposition": "attachment; filename=all-candidates.xlsx"
+        },
     )
-
-
-@router.get("/interview-results")
-def export_interview_results(
-    from_date: Optional[str] = Query(None),
-    to_date: Optional[str] = Query(None),
-    role: Optional[str] = Query(None),
-    decision: Optional[str] = Query(None),
+@router.get("/branch-summary")
+def download_branch_summary(
     db: Database = Depends(get_db),
-    user: UserView = Depends(require_roles(["admin", "hr"])),
+    user: UserView = Depends(require_auth),
 ):
-    """Download Excel: Interview results."""
-    fd = _parse_date(from_date)
-    td = _parse_date(to_date)
-    buf = interview_results(db, from_date=fd, to_date=td, role=role, decision=decision)
-    filename = f"tpeml_interview_results_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.xlsx"
-    return StreamingResponse(
-        buf,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": f"attachment; filename={filename}"},
-    )
+    candidates = list(db[CANDIDATES].find({}))
 
+    summary = {}
 
-@router.get("/audit-logs")
-def export_audit_logs(
-    from_date: Optional[str] = Query(None),
-    to_date: Optional[str] = Query(None),
-    db: Database = Depends(get_db),
-    user: UserView = Depends(require_roles(["admin"])),
-):
-    """Download Excel: Admin audit logs. Admin only."""
-    fd = _parse_date(from_date)
-    td = _parse_date(to_date)
-    buf = audit_logs_report(db, from_date=fd, to_date=td)
-    filename = f"tpeml_audit_logs_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.xlsx"
+    for c in candidates:
+        branch = c.get("diploma_branch") or "Unknown"
+        decision = c.get("decision")
+
+        if branch not in summary:
+            summary[branch] = {
+                "shortlist": 0,
+                "reject": 0,
+                "total": 0
+            }
+
+        if decision == "shortlist":
+            summary[branch]["shortlist"] += 1
+        elif decision == "reject":
+            summary[branch]["reject"] += 1
+
+        summary[branch]["total"] += 1
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Branch Summary"
+
+    ws.append(["Branch", "Shortlisted", "Not-Shortlisted", "Grand Total"])
+
+    for branch, data in summary.items():
+        ws.append([
+            branch,
+            data["shortlist"],
+            data["reject"],
+            data["total"]
+        ])
+
+    stream = BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+
     return StreamingResponse(
-        buf,
+        stream,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": f"attachment; filename={filename}"},
+        headers={
+            "Content-Disposition": "attachment; filename=branch-summary.xlsx"
+        },
     )

@@ -1,8 +1,3 @@
-/**
- * Simple Excel generator for mock data downloads
- * Generates CSV which Excel can open
- */
-
 function escapeCsv(value) {
   if (value === null || value === undefined) return '';
   const str = String(value);
@@ -20,85 +15,123 @@ function arrayToCsv(headers, rows) {
   return `${csvHeaders}\n${csvRows}`;
 }
 
-export function generateAuditLogsExcel(logs) {
-  const headers = ['Timestamp', 'User', 'Action', 'Details'];
-  const rows = logs.map(log => ({
-    'Timestamp': new Date(log.timestamp).toLocaleString(),
-    'User': log.user,
-    'Action': log.action,
-    'Details': log.details,
-  }));
-  return arrayToCsv(headers, rows);
-}
+/* ---------------------------------- */
+/* 1️⃣ ALL CANDIDATES REPORT */
+/* ---------------------------------- */
 
-export function generateInterviewResultsExcel(interviews) {
-  const headers = ['Candidate ID', 'Name', 'Email', 'Contact', 'Diploma Branch', 'Interview Date', 'Decision', 'Notes'];
-  const rows = interviews.map(interview => ({
-    'Candidate ID': interview.candidate_id || interview.id,
-    'Name': interview.name,
-    'Email': interview.email,
-    'Contact': interview.contact_no,
-    'Diploma Branch': interview.diploma_branch,
-    'Interview Date': interview.interview_date ? new Date(interview.interview_date).toLocaleDateString() : '–',
-    'Decision': interview.interview_status || interview.decision || '–',
-    'Notes': interview.interview_notes || interview.notes || '–',
-  }));
-  return arrayToCsv(headers, rows);
-}
-
-export function generateDailyLogExcel(candidates) {
-  const headers = ['Candidate ID', 'Name', 'Email', 'Contact', 'Diploma Branch', 'Registered Date', 'Status'];
-  const rows = candidates.map(candidate => ({
-    'Candidate ID': candidate.candidate_id || candidate.id,
-    'Name': candidate.name,
-    'Email': candidate.email,
-    'Contact': candidate.contact_no,
-    'Diploma Branch': candidate.diploma_branch,
-    'Registered Date': candidate.created_at ? new Date(candidate.created_at).toLocaleDateString() : '–',
-    'Status': candidate.status,
-  }));
-  return arrayToCsv(headers, rows);
-}
-
-export function generateCandidatesExcel(candidates) {
+export function generateAllCandidatesExcel(candidates) {
   const headers = [
-    'Candidate ID', 'Name', 'Gender', 'DOB', 'Email', 'Contact', 'State',
-    'Interview Location', 'Interview Date', 'Recruitment Year',
-    'College', 'Diploma Branch', 'Diploma %', 'Diploma Passout Year',
-    '10th %', '12th %', 'Status', 'Onboarding Type'
+    'Candidate ID',
+    'Name',
+    'Gender',
+    'DOB',
+    'Contact Number',
+    'Email',
+    'Residential Address',
+    'State of Domicile',
+
+    'Interview Location',
+    'Interview Date',
+    'Year of Recruitment',
+
+    'College Name',
+    'University Name',
+    'Diploma Enrollment No',
+    'Diploma Branch',
+    'Diploma Passout Year',
+    'Diploma Percentage',
+    'Backlogs in Diploma',
+
+    '10th Percentage',
+    '10th Passout Year',
+    '12th Percentage',
+    '12th Passout Year',
+
+    'Onboarding Type',
+    'Status',
+    'Decision',
+    'Interview Notes',
+    'Created At'
   ];
-  const rows = candidates.map(candidate => ({
-    'Candidate ID': candidate.candidate_id || candidate.id,
-    'Name': candidate.name,
-    'Gender': candidate.gender || '–',
-    'DOB': candidate.dob ? new Date(candidate.dob).toLocaleDateString() : '–',
-    'Email': candidate.email || '–',
-    'Contact': candidate.contact_no || '–',
-    'State': candidate.state_of_domicile || '–',
-    'Interview Location': candidate.interview_location || '–',
-    'Interview Date': candidate.date_of_interview ? new Date(candidate.date_of_interview).toLocaleDateString() : '–',
-    'Recruitment Year': candidate.year_of_recruitment || '–',
-    'College': candidate.college_name || '–',
-    'Diploma Branch': candidate.diploma_branch || '–',
-    'Diploma %': candidate.diploma_percentage || '–',
-    'Diploma Passout Year': candidate.diploma_passout_year || '–',
-    '10th %': candidate.tenth_percentage || '–',
-    '12th %': candidate.twelfth_percentage || '–',
-    'Status': candidate.status,
-    'Onboarding Type': candidate.onboarding_type || '–',
+
+  const rows = candidates.map(c => ({
+    'Candidate ID': c.candidate_id,
+    'Name': c.name,
+    'Gender': c.gender || '',
+    'DOB': c.dob || '',
+    'Contact Number': c.contact_no || '',
+    'Email': c.email || '',
+    'Residential Address': c.residential_address || '',
+    'State of Domicile': c.state_of_domicile || '',
+
+    'Interview Location': c.interview_location || '',
+    'Interview Date': c.date_of_interview || '',
+    'Year of Recruitment': c.year_of_recruitment || '',
+
+    'College Name': c.college_name || '',
+    'University Name': c.university_name || '',
+    'Diploma Enrollment No': c.diploma_enrollment_no || '',
+    'Diploma Branch': c.diploma_branch || '',
+    'Diploma Passout Year': c.diploma_passout_year || '',
+    'Diploma Percentage': c.diploma_percentage ?? '',
+    'Backlogs in Diploma': c.any_backlog_in_diploma || '',
+
+    '10th Percentage': c.tenth_percentage ?? '',
+    '10th Passout Year': c.tenth_passout_year || '',
+    '12th Percentage': c.twelfth_percentage ?? '',
+    '12th Passout Year': c.twelfth_passout_year || '',
+
+    'Onboarding Type': c.onboarding_type || '',
+    'Status': c.status || '',
+    'Decision': c.decision || '',
+    'Interview Notes': c.interview_notes || '',
+    'Created At': c.created_at || ''
   }));
+
   return arrayToCsv(headers, rows);
 }
 
-export function createBlobFromCsv(csvContent, filename) {
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  return blob;
+
+/* ---------------------------------- */
+/* 2️⃣ BRANCH SUMMARY REPORT */
+/* ---------------------------------- */
+
+export function generateBranchSummaryExcel(candidates) {
+  const summary = {};
+
+  candidates.forEach(c => {
+    const branch = c.diploma_branch || 'Unknown';
+
+    if (!summary[branch]) {
+      summary[branch] = {
+        shortlisted: 0,
+        rejected: 0,
+        total: 0
+      };
+    }
+
+    summary[branch].total += 1;
+
+    if (c.decision === 'shortlist') {
+      summary[branch].shortlisted += 1;
+    } else if (c.decision === 'reject') {
+      summary[branch].rejected += 1;
+    }
+  });
+
+  const headers = [
+    'Branch',
+    'Shortlisted Count',
+    'Rejected Count',
+    'Grand Total'
+  ];
+
+  const rows = Object.entries(summary).map(([branch, data]) => ({
+    'Branch': branch,
+    'Shortlisted Count': data.shortlisted,
+    'Rejected Count': data.rejected,
+    'Grand Total': data.total
+  }));
+
+  return arrayToCsv(headers, rows);
 }
