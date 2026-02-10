@@ -148,6 +148,9 @@ def doc_to_candidate_profile(d: dict) -> dict[str, Any]:
         
         # Status fields
         "status": d.get("status"),
+        "decision": d.get("decision"),
+        "interview_notes": d.get("interview_notes"),
+
         
         # Timestamps
         "created_at": created_at,
@@ -195,6 +198,9 @@ class CandidateProfile(BaseModel):
     
     # Status fields
     status: str
+    decision: Optional[str] = None
+    interview_notes: Optional[str] = None
+
     
     # Timestamps
     created_at: Optional[str] = None

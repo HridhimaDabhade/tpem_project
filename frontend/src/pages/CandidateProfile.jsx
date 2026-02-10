@@ -10,7 +10,10 @@ import '../styles/layout.css';
 import '../styles/candidate-profile.css';
 
 // Uses Vite proxy in dev, environment variable in production
-const API_BASE = 'https://tpemproject-production.up.railway.app';
+//const API_BASE = 'https://tpemproject-production.up.railway.app';
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  'https://tpemproject-production.up.railway.app';
 
 export function CandidateProfile() {
   const { candidateId } = useParams();
