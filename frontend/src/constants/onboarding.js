@@ -13,6 +13,7 @@ export const INTERVIEW_LOCATIONS = [
   'Patna - Women\'s Polytechnic Patna',
   'Lucknow - Government Polytechnic',
   'Ujjain - Government Polytechnic',
+  'Ahmedabad - Government Polytechnic'
 ];
 
 export const RECRUITMENT_YEARS = ['2025', '2026', '2027'];
