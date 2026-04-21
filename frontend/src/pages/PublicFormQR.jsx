@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import '../styles/public-form-qr.css';
 
-const API_BASE = 'https://tpemproject-production.up.railway.app';
+// Use empty base so Vite dev server proxies `/api` to the local backend
+const API_BASE = '';
 
 export function PublicFormQR() {
   const [qrUrl, setQrUrl] = useState('');
@@ -28,7 +29,7 @@ export function PublicFormQR() {
     window.print();
   };
 
-  const publicFormUrl = 'https://tpem-project.vercel.app/apply';
+  const publicFormUrl = 'http://localhost:5173/apply';
 
   return (
     <Layout>

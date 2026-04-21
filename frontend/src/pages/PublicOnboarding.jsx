@@ -12,10 +12,7 @@ import '../styles/onboarding.css';
 import '../styles/public-onboarding.css';
 
 //const API_BASE = 'https://tpemproject-production.up.railway.app';
-//const API_BASE = ''; // Uses Vite proxy in dev, empty for production via env var
-const API_BASE =
-  import.meta.env.VITE_API_BASE ||
-  'https://tpemproject-production.up.railway.app';
+const API_BASE = import.meta.env.VITE_API_BASE || '';
 
 const STEPS = [
   { id: 1, title: 'Interview Details', icon: '📅' },
